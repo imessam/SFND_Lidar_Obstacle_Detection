@@ -18,6 +18,7 @@
 #include <ctime>
 #include <chrono>
 #include "render/box.h"
+#include "kdtree.h"
 #include "unordered_set"
 
 template <typename PointT>
@@ -35,9 +36,9 @@ public:
 
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SeparateClouds(pcl::PointIndices::Ptr inliers, typename pcl::PointCloud<PointT>::Ptr cloud);
 
-    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SegmentPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold);
+    std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SegmentPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold, int type);
 
-    std::vector<typename pcl::PointCloud<PointT>::Ptr> Clustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize);
+    std::vector<typename pcl::PointCloud<PointT>::Ptr> Clustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize, int type);
 
     Box BoundingBox(typename pcl::PointCloud<PointT>::Ptr cluster);
 
@@ -46,5 +47,11 @@ public:
     typename pcl::PointCloud<PointT>::Ptr loadPcd(std::string file);
 
     std::vector<boost::filesystem::path> streamPcd(std::string dataPath);
+
+    std::unordered_set<int> Ransac(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceTol);
+
+    void proximity(typename pcl::PointCloud<PointT>::Ptr cloud,  KdTree<PointT> *tree, typename pcl::PointCloud<PointT>::Ptr cluster, std::unordered_set<int> &processed, int idx, float distanceTol);
+
+    std::vector<typename pcl::PointCloud<PointT>::Ptr>  euclideanCluster(typename pcl::PointCloud<PointT>::Ptr cloud,  KdTree<PointT> *tree, float distanceTol);
 };
 #endif /* PROCESSPOINTCLOUDS_H_ */
