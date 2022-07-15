@@ -29,7 +29,10 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
 
     // Create the filtering object
     typename pcl::VoxelGrid<PointT> sor;
-    typename pcl::CropBox<PointT> cropBox;
+    typename pcl::CropBox<PointT> cropBox, roof;
+    typename pcl::PointIndices::Ptr roofInliers (new pcl::PointIndices());
+    typename pcl::ExtractIndices<PointT> extract;
+    std::vector<int> roofIndices;
 
     sor.setInputCloud(cloud);
     sor.setLeafSize(filterRes, filterRes, filterRes);
@@ -39,6 +42,22 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
     cropBox.setMin(minPoint);
     cropBox.setMax(maxPoint);
     cropBox.filter(*cloud_filtered);
+
+
+    roof.setInputCloud(cloud_filtered);
+    roof.setMin(Eigen::Vector4f(-1.5, -1.7, -1, 1));
+    roof.setMax(Eigen::Vector4f(2.6, 1.7, -.4, 1));
+    roof.filter(roofIndices);
+
+    
+    for(int idx : roofIndices)
+        roofInliers->indices.push_back(idx);
+    
+    extract.setInputCloud(cloud_filtered);
+    extract.setIndices(roofInliers);
+    extract.setNegative(true);
+    extract.filter(*cloud_filtered);
+    
 
     auto endTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
