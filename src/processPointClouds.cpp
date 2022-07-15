@@ -50,15 +50,6 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
     cropBox.setNegative(true);
     cropBox.filter(*cloud_filtered);
 
-    
-    // for(int idx : roofIndices)
-    //     roofInliers->indices.push_back(idx);
-    
-    // extract.setInputCloud(cloud_filtered);
-    // extract.setIndices(roofInliers);
-    // extract.setNegative(true);
-    // extract.filter(*cloud_filtered);
-    
 
     auto endTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
