@@ -44,19 +44,20 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
     cropBox.filter(*cloud_filtered);
 
 
-    roof.setInputCloud(cloud_filtered);
-    roof.setMin(Eigen::Vector4f(-1.5, -1.7, -1, 1));
-    roof.setMax(Eigen::Vector4f(2.6, 1.7, -.4, 1));
-    roof.filter(roofIndices);
+    cropBox.setInputCloud(cloud_filtered);
+    cropBox.setMin(Eigen::Vector4f(-3, -3, -1, 1));
+    cropBox.setMax(Eigen::Vector4f(3, 3, 1, 1));
+    cropBox.setNegative(true);
+    cropBox.filter(*cloud_filtered);
 
     
-    for(int idx : roofIndices)
-        roofInliers->indices.push_back(idx);
+    // for(int idx : roofIndices)
+    //     roofInliers->indices.push_back(idx);
     
-    extract.setInputCloud(cloud_filtered);
-    extract.setIndices(roofInliers);
-    extract.setNegative(true);
-    extract.filter(*cloud_filtered);
+    // extract.setInputCloud(cloud_filtered);
+    // extract.setIndices(roofInliers);
+    // extract.setNegative(true);
+    // extract.filter(*cloud_filtered);
     
 
     auto endTime = std::chrono::steady_clock::now();
